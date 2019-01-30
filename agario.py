@@ -41,6 +41,7 @@ for i in range(-screen_width,screen_width,200):
 BALLS = []
 
 for i in range(number_of_balls):
+	r = random.randint(minimum_ball_radius,maximum_ball_radius)
 	x = random.randint(-screen_width + maximum_ball_radius,screen_width - maximum_ball_radius)
 	y = random.randint(-screen_height + maximum_ball_radius,screen_height - maximum_ball_radius)
 	dx = random.randint(minimum_ball_dx,maximum_ball_dx)
@@ -50,7 +51,6 @@ for i in range(number_of_balls):
 	while(dy == 0):
 		dy = random.randint(minimum_ball_dy,maximum_ball_dy)
 	print(dx,dy)
-	r = random.randint(minimum_ball_radius,maximum_ball_radius)
 	color = (random.random(), random.random(), random.random())
 	Ball1 = Ball(x,y,dx,dy,r,color)
 	BALLS.append(Ball1)
@@ -68,7 +68,7 @@ def collide(ball_a,ball_b):
 	d = math.sqrt(math.pow(ball_a.xcor()-ball_b.xcor(),2)+math.pow(ball_a.ycor()-ball_b.ycor(),2))
 	r1 = ball_a.r
 	r2 = ball_b.r
-	if (d < (r1+r2)-5):
+	if (d < (r1+r2)):
 		return True
 	return False
 
@@ -87,7 +87,7 @@ def check_points_collision():
 				x = point.xcor()
 				y = point.ycor()
 				color = (random.random(), random.random(), random.random())
-				ball.r = ball.r + 2
+				ball.r = ball.r + 1
 				ball.shapesize(ball.r/10)
 				point.newPoint(x,y,r,color)
 				point.hideturtle()
@@ -105,48 +105,49 @@ def check_all_balls_collision():
 			if(collide(ball_a,ball_b)):
 				r1 = ball_a.r
 				r2 = ball_b.r
+				R = random.randint(minimum_ball_radius,maximum_ball_radius)
 				X = random.randint(-screen_width + maximum_ball_radius,screen_width - maximum_ball_radius)
 				Y = random.randint(-screen_height + maximum_ball_radius,screen_height - maximum_ball_radius)
+				while math.sqrt(math.pow(my_ball.xcor()-X,2)+math.pow(my_ball.ycor()-Y,2))<=my_ball.r+R and my_ball.r<100:
+					X = random.randint(-screen_width + maximum_ball_radius,screen_width - maximum_ball_radius)
+					Y = random.randint(-screen_height + maximum_ball_radius,screen_height - maximum_ball_radius)
 				while(DX == 0):
 					DX = random.randint(minimum_ball_dx,maximum_ball_dx)
 				while(DY == 0):
 					DY = random.randint(minimum_ball_dy,maximum_ball_dy)
-				R = random.randint(minimum_ball_radius,maximum_ball_radius)
 				Color = (random.random(), random.random(), random.random())
 				if(r1>r2):
 
 					if(ball_b == my_ball):
-						turtle.pencolor("red")
+						
 						turtle.goto(0,0)
-						turtle.write("GAME OVER!", move=False, align="center", font=("Arial",64, "normal"))
 						turtle.pencolor("black")
-						time.sleep(1)
+						#time.sleep(1)
 						running = False
 					else:
 						ball_b.new_ball(X,Y,DX,DY,R,Color)
-					ball_a.r = r1 + 3
+					ball_a.r = r1 + r2/15
 					ball_a.shapesize(ball_a.r/10)
 				else:
 					if(ball_a == my_ball):
 						turtle.pencolor("red")
 						turtle.goto(0,0)
-						turtle.write("GAME OVER!", move=False, align="center", font=("Arial",64, "normal"))
 						turtle.pencolor("black")
-						time.sleep(1)
+						#time.sleep(1)
 						running = False
 					else:
 						ball_a.new_ball(X,Y,DX,DY,R,Color)
-					ball_b.r = r2 + 3
+					ball_b.r = r2 + r1/15
 					ball_b.shapesize(ball_b.r/10)
 
 def win():
 	if(my_ball.shapesize()[1] >= 80):
+		global running
 		turtle.pu()
 		turtle.goto(0,0)
-		turtle.pencolor("yellow")
-		turtle.write("YOU WIN!", move=False, align="center", font=("Arial",64, "normal"))
+		turtle.pencolor("yellow")		
 		turtle.pencolor("black")
-		time.sleep(5)
+		turtle.pd()
 		running = False
 
 
@@ -157,7 +158,6 @@ running = True
 
 def spacebar():
 	global pause
-	print("space")
 	if pause==False:
 		pause=True
 	else:
@@ -184,8 +184,13 @@ while running:
 		if point.timer <= 0:
 			point.showturtle()
 	#print('here')
-
-
-#turtle.bye()
+if(my_ball.shapesize()[1] >= 80):
+	turtle.pencolor("yellow")
+	turtle.write("YOU WIN!", move=False, align="center", font=("Arial",64, "normal"))
+else:
+	turtle.pencolor("red")
+	turtle.write("GAME OVER!", move=False, align="center", font=("Arial",64, "normal"))
+time.sleep(3)
+turtle.bye()
 # turtle.update()
 turtle.mainloop()
